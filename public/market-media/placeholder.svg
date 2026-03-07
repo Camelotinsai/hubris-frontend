@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 280" role="img" aria-labelledby="title desc">
+  <title id="title">Market placeholder image</title>
+  <desc id="desc">Fallback visual used when market media is unavailable.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#0d1520"/>
+      <stop offset="55%" stop-color="#182839"/>
+      <stop offset="100%" stop-color="#0a0e14"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="80%" cy="20%" r="55%">
+      <stop offset="0%" stop-color="#2ee6a0" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#2ee6a0" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="640" height="280" fill="url(#bg)"/>
+  <rect width="640" height="280" fill="url(#glow)"/>
+  <g fill="none" stroke="#77caa3" stroke-opacity="0.28">
+    <path d="M0 190 C120 145 240 220 360 170 C450 132 530 145 640 120" stroke-width="4"/>
+    <path d="M0 208 C110 165 220 246 340 196 C440 154 532 168 640 146" stroke-width="2"/>
+  </g>
+  <g fill="#dfe7f2" fill-opacity="0.82" font-family="Rajdhani, Arial, sans-serif" text-anchor="middle">
+    <text x="320" y="136" font-size="26" letter-spacing="3">MARKET</text>
+    <text x="320" y="164" font-size="18" letter-spacing="2" fill-opacity="0.62">MEDIA UNAVAILABLE</text>
+  </g>
+</svg>

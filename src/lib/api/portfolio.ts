@@ -1,0 +1,25 @@
+import { apiGet, sleep } from "@/lib/api/client";
+import type { PortfolioResponse } from "@/lib/api/types";
+import { env } from "@/lib/env";
+import type { PortfolioSummary } from "@/types/portfolio";
+
+const mockPortfolioSummary: PortfolioSummary = {
+  account: "0x7fA313B7A8D0c2B332bA08992EAfECfA32434567",
+  vaultBalance: 38_220.15,
+  portfolioValue: 62_348.42,
+  unrealizedPnl: 4_128.55,
+  realizedPnl: 8_014.31,
+  usedMargin: 21_410,
+  availableMargin: 16_810.15,
+  marginRatio: 0.256
+};
+
+async function fallbackPortfolio(): Promise<PortfolioResponse> {
+  await sleep(140);
+  return { data: mockPortfolioSummary };
+}
+
+export async function fetchPortfolioSummary(): Promise<PortfolioSummary> {
+  const response = await apiGet<PortfolioResponse>(`${env.endpoints.portfolio}/summary`, fallbackPortfolio);
+  return response.data;
+}

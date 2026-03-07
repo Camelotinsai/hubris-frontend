@@ -1,0 +1,15 @@
+:root {
+  --color-bg: #050608;
+  --color-panel: #0a0c11;
+  --color-panel-2: #10131a;
+  --color-line: #1c222d;
+  --color-line-strong: #2c3442;
+  --color-text: #f5f7fa;
+  --color-muted: #9ba5b5;
+  --color-positive: #00ff88;
+  --color-risk: #ff3344;
+  --color-focus: #8fb8ff;
+  --surface-padding: 1rem;
+  --radius: 16px;
+  --shadow-threshold: 0 0 0 1px rgba(255, 255, 255, 0.1), 0 24px 56px rgba(0, 0, 0, 0.5);
+}
