@@ -9,7 +9,7 @@ export function useOrderbook(marketId: string) {
         queryKey: ["orderbook", marketId],
         queryFn: () => fetchOrderbook(marketId),
         enabled: Boolean(marketId),
-        refetchInterval: 8_000
+        refetchInterval: 5_000
       },
       {
         queryKey: ["recent-trades", marketId],
