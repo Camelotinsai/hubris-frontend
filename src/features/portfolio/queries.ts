@@ -3,10 +3,12 @@ import { usePortfolio } from "@/hooks/use-portfolio";
 import { usePositions } from "@/hooks/use-positions";
 import { useMarketList } from "@/hooks/use-market-list";
 import { useQuery } from "@tanstack/react-query";
+import { useAccount } from "wagmi";
 
 import { fetchOrderHistory, fetchShareBalances } from "@/lib/api/positions";
 
 export function usePortfolioQueries() {
+  const { address } = useAccount();
   const summaryQuery = usePortfolio();
   const positionsQuery = usePositions();
   const openOrdersQuery = useOpenOrders();
@@ -16,8 +18,8 @@ export function usePortfolioQueries() {
     queryFn: fetchOrderHistory
   });
   const shareBalancesQuery = useQuery({
-    queryKey: ["share-balances"],
-    queryFn: fetchShareBalances
+    queryKey: ["share-balances", address],
+    queryFn: () => fetchShareBalances(address)
   });
 
   return {

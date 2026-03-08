@@ -4,6 +4,11 @@ import { env } from "@/lib/env";
 import { mockOpenOrders } from "@/lib/api/orderbook";
 import type { Order } from "@/types/order";
 import type { Position, ShareBalance } from "@/types/position";
+import {
+  readAllTraderPositions,
+  readAllTraderOrders,
+  readShareBalances
+} from "@/lib/web3/read-contracts";
 
 const now = Date.now();
 
@@ -119,7 +124,15 @@ async function fallbackShares(): Promise<ShareBalancesResponse> {
   return { data: mockShareBalances };
 }
 
-export async function fetchPositions(): Promise<Position[]> {
+export async function fetchPositions(userAddress?: string): Promise<Position[]> {
+  // On-chain read when connected and not in mock mode
+  if (!env.mockData && userAddress) {
+    try {
+      return await readAllTraderPositions(userAddress as `0x${string}`);
+    } catch {
+      // fall through to API / mock
+    }
+  }
   const response = await apiGet<PositionsResponse>(`${env.endpoints.positions}`, fallbackPositions);
   return response.data;
 }
@@ -129,7 +142,14 @@ export async function fetchOrderHistory(): Promise<Order[]> {
   return response.data;
 }
 
-export async function fetchShareBalances(): Promise<ShareBalance[]> {
+export async function fetchShareBalances(userAddress?: string): Promise<ShareBalance[]> {
+  if (!env.mockData && userAddress) {
+    try {
+      return await readShareBalances(userAddress as `0x${string}`);
+    } catch {
+      // fall through
+    }
+  }
   const response = await apiGet<ShareBalancesResponse>(`${env.endpoints.shares}/balances`, fallbackShares);
   return response.data;
 }

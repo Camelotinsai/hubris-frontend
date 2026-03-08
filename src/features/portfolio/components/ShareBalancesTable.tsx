@@ -1,8 +1,10 @@
 import type { ShareBalance } from "@/types/position";
 
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { formatNumber } from "@/lib/format";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { useClaimWinningsMutation, useClaimRefundMutation } from "@/features/portfolio/mutations";
 
 interface ShareBalancesTableProps {
   rows: ShareBalance[];
@@ -10,6 +12,9 @@ interface ShareBalancesTableProps {
 }
 
 export function ShareBalancesTable({ rows, humanOnlyByMarketId }: ShareBalancesTableProps) {
+  const claimWinnings = useClaimWinningsMutation();
+  const claimRefund = useClaimRefundMutation();
+
   return (
     <Table>
       <TableHeader>
@@ -17,6 +22,7 @@ export function ShareBalancesTable({ rows, humanOnlyByMarketId }: ShareBalancesT
           <TableHead>Market</TableHead>
           <TableHead>YES Shares</TableHead>
           <TableHead>NO Shares</TableHead>
+          <TableHead />
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -30,6 +36,32 @@ export function ShareBalancesTable({ rows, humanOnlyByMarketId }: ShareBalancesT
             </TableCell>
             <TableCell>{formatNumber(balance.yesShares, 0)}</TableCell>
             <TableCell>{formatNumber(balance.noShares, 0)}</TableCell>
+            <TableCell>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant="secondary"
+                  size="sm"
+                  disabled={claimWinnings.isPending}
+                  onClick={() =>
+                    claimWinnings.mutate({ marketAddress: balance.marketId as `0x${string}` })
+                  }
+                >
+                  Claim Winnings
+                </Button>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  size="sm"
+                  disabled={claimRefund.isPending}
+                  onClick={() =>
+                    claimRefund.mutate({ marketAddress: balance.marketId as `0x${string}` })
+                  }
+                >
+                  Claim Refund
+                </Button>
+              </div>
+            </TableCell>
           </TableRow>
         ))}
       </TableBody>

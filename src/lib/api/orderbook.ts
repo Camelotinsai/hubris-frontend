@@ -2,6 +2,7 @@ import { apiGet, sleep } from "@/lib/api/client";
 import type { OrdersResponse, OrderbookResponse, RecentTradesResponse } from "@/lib/api/types";
 import { env } from "@/lib/env";
 import type { Order, Orderbook, TradePrint } from "@/types/order";
+import { readOrderbook, readAllTraderOrders } from "@/lib/web3/read-contracts";
 
 const mockOrderbooks: Record<string, Orderbook> = {
   "btc-150k-2026": {
@@ -117,6 +118,14 @@ async function fallbackOpenOrders(): Promise<OrdersResponse> {
 }
 
 export async function fetchOrderbook(marketId: string): Promise<Orderbook> {
+  // Try on-chain read first when marketId is an address and not in mock mode
+  if (!env.mockData && marketId.startsWith("0x")) {
+    try {
+      return await readOrderbook(marketId as `0x${string}`);
+    } catch {
+      // fall through
+    }
+  }
   const response = await apiGet<OrderbookResponse>(
     `${env.endpoints.markets}/${marketId}/orderbook`,
     () => fallbackOrderbook(marketId)
@@ -132,7 +141,14 @@ export async function fetchRecentTrades(marketId: string): Promise<TradePrint[]>
   return response.data;
 }
 
-export async function fetchOpenOrders(): Promise<Order[]> {
+export async function fetchOpenOrders(userAddress?: string): Promise<Order[]> {
+  if (!env.mockData && userAddress) {
+    try {
+      return await readAllTraderOrders(userAddress as `0x${string}`);
+    } catch {
+      // fall through
+    }
+  }
   const response = await apiGet<OrdersResponse>(`${env.endpoints.orders}/open`, fallbackOpenOrders);
   return response.data;
 }

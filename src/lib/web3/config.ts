@@ -1,5 +1,5 @@
 import { createConfig, http } from "wagmi";
-import { injected } from "wagmi/connectors";
+import { coinbaseWallet, injected, walletConnect } from "wagmi/connectors";
 import { defineChain, type Chain } from "viem";
 import { arbitrum, base, mainnet, sepolia } from "viem/chains";
 
@@ -70,7 +70,13 @@ const transports = Object.fromEntries(
 
 export const wagmiConfig = createConfig({
   chains: chains as [Chain, ...Chain[]],
-  connectors: [injected({ shimDisconnect: true })],
+  connectors: [
+    injected({ shimDisconnect: true }),
+    coinbaseWallet({ appName: "Hubris" }),
+    ...(env.walletConnectProjectId
+      ? [walletConnect({ projectId: env.walletConnectProjectId })]
+      : [])
+  ],
   transports,
   ssr: false
 });

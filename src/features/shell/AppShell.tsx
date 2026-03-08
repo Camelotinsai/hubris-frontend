@@ -5,6 +5,7 @@ import { DisconnectedStatusBanner } from "@/features/auth/DisconnectedStatusBann
 import { Topbar } from "@/features/shell/Topbar";
 import { Sidebar } from "@/features/shell/Sidebar";
 import { MobileNav } from "@/features/shell/MobileNav";
+import { NotificationViewport } from "@/features/shell/NotificationViewport";
 
 export function AppShell({ children }: PropsWithChildren) {
   return (
@@ -32,6 +33,7 @@ export function AppShell({ children }: PropsWithChildren) {
           </div>
           <MobileNav />
         </div>
+        <NotificationViewport />
       </div>
     </PopoverLayerProvider>
   );

@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { useAtom } from "jotai";
 
 import type { Market } from "@/types/market";
@@ -22,6 +22,42 @@ interface UseTradeTicketOptions {
 
 export function useTradeTicket(market: Market | undefined, options?: UseTradeTicketOptions) {
   const [ticket, setTicket] = useAtom(tradeTicketAtom);
+
+  /** Change collateral and keep quantity in sync (quantity = collateral × leverage). */
+  const setCollateral = useCallback(
+    (collateral: number) => {
+      setTicket((prev) => ({
+        ...prev,
+        collateral,
+        quantity: parseFloat((collateral * Math.max(prev.leverage, 1)).toFixed(6))
+      }));
+    },
+    [setTicket]
+  );
+
+  /** Change quantity and back-calculate collateral (collateral = quantity / leverage). */
+  const setQuantity = useCallback(
+    (quantity: number) => {
+      setTicket((prev) => ({
+        ...prev,
+        quantity,
+        collateral: parseFloat((quantity / Math.max(prev.leverage, 1)).toFixed(2))
+      }));
+    },
+    [setTicket]
+  );
+
+  /** Change leverage, keep collateral fixed, and recalculate quantity. */
+  const setLeverage = useCallback(
+    (leverage: number) => {
+      setTicket((prev) => ({
+        ...prev,
+        leverage,
+        quantity: parseFloat((prev.collateral * Math.max(leverage, 1)).toFixed(6))
+      }));
+    },
+    [setTicket]
+  );
 
   const entryPrice = getEntryPrice(ticket, market);
   const notional = calculateNotional(ticket.collateral, ticket.leverage);
@@ -52,6 +88,9 @@ export function useTradeTicket(market: Market | undefined, options?: UseTradeTic
   return {
     ticket,
     setTicket,
+    setCollateral,
+    setQuantity,
+    setLeverage,
     entryPrice,
     notional,
     marketPayment,

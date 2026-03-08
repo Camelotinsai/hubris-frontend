@@ -44,8 +44,8 @@ export function toMarketCardModel(market: Market): MarketCardModel {
     humanOnly: Boolean(market.humanOnly),
     feeRate: market.feeRate ?? 0.0008,
     feeDiscountPct: market.feeDiscountPct ?? 0,
-    volume24h: market.stats.volume24h ?? 0,
-    openInterest: market.stats.openInterest ?? 0,
+    volume24h: market.stats.volume24h ?? 100000,
+    openInterest: market.stats.openInterest ?? 500000,
     fundingRateBps: market.stats.fundingRateBps ?? 0,
     layout: "binary",
     primaryMarketId: market.id
