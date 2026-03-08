@@ -64,7 +64,7 @@ function fallbackProofId(result: IDKitResult): string {
 }
 
 async function requestWorldIdRpContext(address: string): Promise<RpContext> {
-  const response = await fetch(`${env.apiBaseUrl}${env.endpoints.worldIdSignature}`, {
+  const response = await fetch(`${env.worldIdApiBaseUrl}${env.endpoints.worldIdSignature}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
@@ -91,7 +91,7 @@ async function requestWorldIdRpContext(address: string): Promise<RpContext> {
 }
 
 async function verifyWorldIdResult(address: string, result: IDKitResult): Promise<WorldIdProofPayload> {
-  const response = await fetch(`${env.apiBaseUrl}${env.endpoints.worldIdVerify}`, {
+  const response = await fetch(`${env.worldIdApiBaseUrl}${env.endpoints.worldIdVerify}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json"

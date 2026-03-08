@@ -18,9 +18,12 @@ export function LeverageSlider({ value, max, onChange }: LeverageSliderProps) {
         min={1}
         max={max}
         step={0.5}
-        value={[value]}
-        onValueChange={(values) => {
+        defaultValue={[value]}
+        onValueCommit={(values) => {
           const next = values[0] ?? 1;
+          if (next === value) {
+            return;
+          }
           onChange(next);
           track("leverage_change", { leverage: next });
         }}

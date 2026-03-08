@@ -112,6 +112,9 @@ const explorerUrls = Object.fromEntries(
   })
 ) as Record<number, string>;
 
+const apiBaseUrl = read(raw, "VITE_API_BASE_URL", "https://api.hubris.example");
+const worldIdApiBaseUrl = read(raw, "VITE_WORLD_ID_API_BASE_URL", apiBaseUrl);
+
 function chainAddress(key: string): `0x${string}` {
   return readAddress(
     raw,
@@ -128,7 +131,8 @@ export const env = {
   rpcUrls,
   explorerUrl: explorerUrls[chainId] ?? defaultExplorerFor(chainId),
   explorerUrls,
-  apiBaseUrl: read(raw, "VITE_API_BASE_URL", "https://api.hubris.example"),
+  apiBaseUrl,
+  worldIdApiBaseUrl,
   wsUrl: read(raw, "VITE_WS_URL", "wss://api.hubris.example/ws"),
   apiTimeoutMs: readNumber(raw, "VITE_API_TIMEOUT_MS", 12_000),
   enableWs: readBool(raw, "VITE_ENABLE_WS", true),

@@ -134,11 +134,15 @@ export function TradeTicket({ market, initialOutcome }: TradeTicketProps) {
         />
       </label>
 
-      <LeverageSlider
-        value={ticket.leverage}
-        max={market.leverageCap}
-        onChange={(leverage) => setTicket((prev) => ({ ...prev, leverage }))}
-      />
+      <div className="space-y-2 rounded-xl border border-line p-3">
+        <div className="flex items-center justify-between text-xs uppercase tracking-[0.14em] text-muted">
+          <span>Leverage</span>
+          <span>{ticket.leverage.toFixed(1)}x</span>
+        </div>
+        <p className="text-[11px] text-muted">
+          Slider temporarily disabled in local demo capture mode.
+        </p>
+      </div>
 
       <PriceInput
         value={ticket.limitPrice}
