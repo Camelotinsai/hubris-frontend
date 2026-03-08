@@ -32,6 +32,9 @@ export function TradeTicket({ market, initialOutcome }: TradeTicketProps) {
   const {
     ticket,
     setTicket,
+    setCollateral,
+    setQuantity,
+    setLeverage,
     notional,
     marketPayment,
     feeEstimate,
@@ -121,7 +124,7 @@ export function TradeTicket({ market, initialOutcome }: TradeTicketProps) {
 
       <CollateralInput
         value={ticket.collateral}
-        onChange={(collateral) => setTicket((prev) => ({ ...prev, collateral }))}
+        onChange={setCollateral}
       />
 
       <label className="space-y-2 text-xs uppercase tracking-[0.14em] text-muted">
@@ -130,14 +133,14 @@ export function TradeTicket({ market, initialOutcome }: TradeTicketProps) {
           type="number"
           min={0}
           value={Number.isNaN(ticket.quantity) ? "" : ticket.quantity}
-          onChange={(event) => setTicket((prev) => ({ ...prev, quantity: Number(event.target.value) }))}
+          onChange={(event) => setQuantity(Number(event.target.value))}
         />
       </label>
 
       <LeverageSlider
         value={ticket.leverage}
         max={market.leverageCap}
-        onChange={(leverage) => setTicket((prev) => ({ ...prev, leverage }))}
+        onChange={setLeverage}
       />
 
       <PriceInput
@@ -194,7 +197,7 @@ export function TradeTicket({ market, initialOutcome }: TradeTicketProps) {
             marketPayment,
             worldIdVerified: worldId.isVerified
           });
-          mutation.mutate({ marketId: market.id, ticket });
+          mutation.mutate({ marketAddress: market.address, ticket });
         }}
       />
 

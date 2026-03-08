@@ -1,8 +1,10 @@
 import type { Position } from "@/types/position";
 
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { formatNumber, formatUsd } from "@/lib/format";
+import { useClosePositionMutation } from "@/features/portfolio/mutations";
 
 interface PositionsTableProps {
   rows: Position[];
@@ -10,6 +12,8 @@ interface PositionsTableProps {
 }
 
 export function PositionsTable({ rows, humanOnlyByMarketId }: PositionsTableProps) {
+  const closePosition = useClosePositionMutation();
+
   return (
     <Table>
       <TableHeader>
@@ -20,6 +24,7 @@ export function PositionsTable({ rows, humanOnlyByMarketId }: PositionsTableProp
           <TableHead>Leverage</TableHead>
           <TableHead>PnL</TableHead>
           <TableHead>Liq Est.</TableHead>
+          <TableHead />
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -38,6 +43,22 @@ export function PositionsTable({ rows, humanOnlyByMarketId }: PositionsTableProp
               {formatUsd(position.unrealizedPnl)}
             </TableCell>
             <TableCell>{formatNumber(position.liquidationPriceEstimate * 100, 2)}%</TableCell>
+            <TableCell>
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                disabled={closePosition.isPending}
+                onClick={() =>
+                  closePosition.mutate({
+                    marketAddress: position.marketId as `0x${string}`,
+                    positionId: position.id
+                  })
+                }
+              >
+                Close
+              </Button>
+            </TableCell>
           </TableRow>
         ))}
       </TableBody>
