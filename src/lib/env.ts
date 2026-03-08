@@ -122,6 +122,7 @@ function chainAddress(key: string): `0x${string}` {
 
 export const env = {
   mockData: readBool(raw, "VITE_MOCK_DATA", true),
+  walletConnectProjectId: read(raw, "VITE_WALLETCONNECT_PROJECT_ID", ""),
   availableChains,
   chainId,
   rpcUrl: rpcUrls[chainId] ?? defaultRpcFor(chainId),

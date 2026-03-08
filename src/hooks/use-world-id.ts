@@ -130,13 +130,20 @@ export function useWorldId() {
 
   const hasWorldIdConfig = env.worldId.appId.length > 0 && env.worldId.action.length > 0;
 
+  // Memoize the preset so IDKit receives a stable object reference unless the
+  // wallet address actually changes. Without this, deviceLegacy({...}) creates
+  // a new object on every render, causing IDKit to re-initialise and call
+  // setState in a loop → "Maximum update depth exceeded".
+  const walletSignal = wallet.address?.toLowerCase() ?? "wallet-disconnected";
+  const preset = useMemo(() => deviceLegacy({ signal: walletSignal }), [walletSignal]);
+
   const flow = useIDKitRequest({
     app_id: (hasWorldIdConfig ? env.worldId.appId : "app_config_missing") as `app_${string}`,
     action: hasWorldIdConfig ? env.worldId.action : "world-id-config-missing",
     rp_context: rpContext,
     allow_legacy_proofs: env.worldId.allowLegacyProofs,
     environment: env.worldId.environment,
-    preset: deviceLegacy({ signal: wallet.address?.toLowerCase() ?? "wallet-disconnected" })
+    preset
   });
 
   const mutation = useMutation({
