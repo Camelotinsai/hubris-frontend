@@ -8,6 +8,7 @@ const CHAIN_ALIASES: Record<string, number> = {
 };
 
 type EnvMap = Record<string, string | undefined>;
+type WorldIdEnvironment = "production" | "staging";
 
 function read(raw: EnvMap, key: string, fallback: string): string {
   const value = raw[key];
@@ -26,6 +27,11 @@ function readBool(raw: EnvMap, key: string, fallback: boolean): boolean {
   if (value === "true") return true;
   if (value === "false") return false;
   return fallback;
+}
+
+function readWorldIdEnvironment(raw: EnvMap, key: string): WorldIdEnvironment {
+  const value = raw[key]?.toLowerCase();
+  return value === "staging" ? "staging" : "production";
 }
 
 function readCsvNumbers(raw: EnvMap, key: string, fallback: number[]): number[] {
@@ -126,12 +132,20 @@ export const env = {
   wsUrl: read(raw, "VITE_WS_URL", "wss://api.hubris.example/ws"),
   apiTimeoutMs: readNumber(raw, "VITE_API_TIMEOUT_MS", 12_000),
   enableWs: readBool(raw, "VITE_ENABLE_WS", true),
+  worldId: {
+    appId: read(raw, "VITE_WORLD_ID_APP_ID", ""),
+    action: read(raw, "VITE_WORLD_ID_ACTION", ""),
+    allowLegacyProofs: readBool(raw, "VITE_WORLD_ID_ALLOW_LEGACY_PROOFS", true),
+    environment: readWorldIdEnvironment(raw, "VITE_WORLD_ID_ENVIRONMENT")
+  },
   endpoints: {
     markets: read(raw, "VITE_ENDPOINT_MARKETS", "/markets"),
     orders: read(raw, "VITE_ENDPOINT_ORDERS", "/orders"),
     positions: read(raw, "VITE_ENDPOINT_POSITIONS", "/positions"),
     portfolio: read(raw, "VITE_ENDPOINT_PORTFOLIO", "/portfolio"),
-    shares: read(raw, "VITE_ENDPOINT_SHARES", "/shares")
+    shares: read(raw, "VITE_ENDPOINT_SHARES", "/shares"),
+    worldIdSignature: read(raw, "VITE_ENDPOINT_WORLD_ID_SIGNATURE", "/world-id/rp-signature"),
+    worldIdVerify: read(raw, "VITE_ENDPOINT_WORLD_ID_VERIFY", "/world-id/verify")
   },
   contracts: {
     marketFactory: chainAddress("VITE_MARKET_FACTORY_ADDRESS"),
