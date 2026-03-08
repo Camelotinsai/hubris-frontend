@@ -9,6 +9,7 @@ import { track } from "@/lib/analytics";
 import { formatNumber, formatUsd } from "@/lib/format";
 import { useTradeTicket } from "@/hooks/use-trade-ticket";
 import { useWorldId } from "@/hooks/use-world-id";
+import { useNotifications } from "@/hooks/use-notifications";
 import { useSubmitTradeMutation } from "@/features/trade/mutations";
 import { OutcomeToggle } from "@/features/trade/components/OutcomeToggle";
 import { OrderTypeTabs } from "@/features/trade/components/OrderTypeTabs";
@@ -29,6 +30,7 @@ export function TradeTicket({ market, initialOutcome }: TradeTicketProps) {
   const [imageFailed, setImageFailed] = useState(false);
   const [fallbackImageFailed, setFallbackImageFailed] = useState(false);
   const worldId = useWorldId();
+  const { notifyError, notifySuccess } = useNotifications();
   const {
     ticket,
     setTicket,
@@ -187,6 +189,7 @@ export function TradeTicket({ market, initialOutcome }: TradeTicketProps) {
         disabled={!canSubmit}
         pending={mutation.isPending}
         onClick={() => {
+          const isMarketOrder = ticket.type === "MARKET";
           track("trade_ticket_submit", {
             marketId: market.id,
             type: ticket.type,
@@ -197,7 +200,23 @@ export function TradeTicket({ market, initialOutcome }: TradeTicketProps) {
             marketPayment,
             worldIdVerified: worldId.isVerified
           });
-          mutation.mutate({ marketAddress: market.address, ticket });
+          mutation.mutate(
+            { marketAddress: market.address, ticket },
+            {
+              onSuccess: (result) => {
+                notifySuccess({
+                  title: isMarketOrder ? "Market order submitted" : "Limit order submitted",
+                  message: `Tx ${result.txHash.slice(0, 8)}...${result.txHash.slice(-6)}`
+                });
+              },
+              onError: (error) => {
+                notifyError({
+                  title: isMarketOrder ? "Market order failed" : "Order submission failed",
+                  message: error instanceof Error ? error.message : "Retry after state sync."
+                });
+              }
+            }
+          );
         }}
       />
 
