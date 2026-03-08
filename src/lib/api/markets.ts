@@ -2,6 +2,11 @@ import { apiGet, sleep } from "@/lib/api/client";
 import type { MarketDetailResponse, MarketListRequest, MarketsResponse } from "@/lib/api/types";
 import { env } from "@/lib/env";
 import type { Market } from "@/types/market";
+import {
+  readAllMarketAddresses,
+  readMarketInfo,
+  marketInfoToMarket
+} from "@/lib/web3/read-contracts";
 
 export const mockMarkets: Market[] = [
   {
@@ -192,6 +197,36 @@ async function fallbackMarkets(request?: MarketListRequest): Promise<MarketsResp
 }
 
 export async function fetchMarkets(request?: MarketListRequest): Promise<Market[]> {
+  // Always try on-chain first; fall back to API / mock on failure or empty result
+  try {
+    const addresses = await readAllMarketAddresses();
+    if (addresses.length > 0) {
+      const infos = await Promise.all(addresses.map(readMarketInfo));
+      let markets = infos.filter(Boolean).map((info) => marketInfoToMarket(info!));
+
+      const filter = request?.filter;
+      if (filter?.category && filter.category !== "Trending") {
+        markets = markets.filter((m) => m.category === filter.category);
+      }
+      if (filter?.status) {
+        markets = markets.filter((m) => m.status === filter.status);
+      }
+      if (filter?.access === "human-only") {
+        markets = markets.filter((m) => Boolean(m.humanOnly));
+      }
+      if (filter?.access === "standard") {
+        markets = markets.filter((m) => !m.humanOnly);
+      }
+      if (filter?.search) {
+        const q = filter.search.toLowerCase();
+        markets = markets.filter((m) => m.question.toLowerCase().includes(q));
+      }
+      return markets;
+    }
+  } catch (e) {
+    console.log(e);
+    // fall through to API / mock
+  }
   const response = await apiGet<MarketsResponse>(`${env.endpoints.markets}`, () => fallbackMarkets(request));
   return response.data;
 }
@@ -207,6 +242,15 @@ async function fallbackMarketDetail(marketId: string): Promise<MarketDetailRespo
 }
 
 export async function fetchMarketById(marketId: string): Promise<Market> {
+  // If it looks like an on-chain address, always read directly from chain
+  if (marketId.startsWith("0x")) {
+    try {
+      const info = await readMarketInfo(marketId as `0x${string}`);
+      if (info) return marketInfoToMarket(info);
+    } catch {
+      // fall through
+    }
+  }
   const response = await apiGet<MarketDetailResponse>(
     `${env.endpoints.markets}/${marketId}`,
     () => fallbackMarketDetail(marketId)
