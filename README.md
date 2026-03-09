@@ -13,6 +13,33 @@ It includes markets discovery, trade execution UI, portfolio views, wallet conne
 - Tailwind CSS + Radix UI
 - Jotai state atoms
 
+## Chainlink CRE Submission Requirements
+
+These are the required submission artifacts and checks:
+
+- [x] Project description covering use case and stack/architecture
+  - This README (`Stack`, `App Routes`, `Project Structure`) plus [`../prod_desc.md`](../prod_desc.md) and [`../docs/hubris-contract-backend-integration-guide.md`](../docs/hubris-contract-backend-integration-guide.md)
+- [ ] 3-5 minute publicly viewable video showing workflow execution (in-app or CLI simulation)
+  - Add URL: `<ADD_PUBLIC_VIDEO_URL>`
+- [ ] Publicly accessible source code
+  - Add URL: `<ADD_PUBLIC_REPO_URL>`
+- [x] README includes links to files that use Chainlink
+  - [`../prod_desc.md`](../prod_desc.md)
+  - [`../doc/demo/demo_script.md`](../doc/demo/demo_script.md)
+  - [`../doc/demo/demo_script_11labs.md`](../doc/demo/demo_script_11labs.md)
+  - [`../demo_v0.4/src/scenes/Resolution.tsx`](../demo_v0.4/src/scenes/Resolution.tsx)
+  - [`../demo_v0.4/src/scenes/FundingLiquidation.tsx`](../demo_v0.4/src/scenes/FundingLiquidation.tsx)
+  - [`../demo_v0.4/src/scenes/UnderTheHood.tsx`](../demo_v0.4/src/scenes/UnderTheHood.tsx)
+- [ ] Follow rules for sponsor-specific prizes
+  - Add rules link/notes: `<ADD_SPONSOR_RULES_URL_OR_NOTES>`
+- [ ] Build, simulate, or deploy a CRE workflow used within this project
+  - Add evidence: `<ADD_CRE_CLI_SIMULATION_OR_DEPLOYMENT_LINK>`
+- [ ] Workflow demonstrates:
+  - At least one blockchain integration
+  - At least one external API/system/data source/LLM/AI agent
+  - Successful CRE CLI simulation or live deployment on CRE network
+  - Add proof links: `<ADD_PROOF_LINKS>`
+
 ## App Routes
 
 - `/` and `/markets`: markets list and filtering
